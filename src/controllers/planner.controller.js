@@ -209,4 +209,35 @@ const getTasksForPlan = async (req, res) => {
     )
   }
 }
-export { uploadSubject, getTasksForPlan, getSubjects, getUnits, generateStudyPlan, getStudyPlan }
+
+const deleteStudyPlan = async (req, res) => {
+  try {
+    const { planId } = req.params
+
+    const plan = await StudyPlan.findOne({
+      _id: planId,
+      student: req.user._id,
+    })
+
+    if (!plan) {
+      return res.status(404).json(
+        new ApiResponse(404, null, "Study plan not found")
+      )
+    }
+
+    // Delete all tasks for this plan
+    await Task.deleteMany({ studyPlan: planId })
+
+    // Delete the plan
+    await StudyPlan.findByIdAndDelete(planId)
+
+    return res.status(200).json(
+      new ApiResponse(200, null, "Study plan deleted successfully")
+    )
+  } catch (error) {
+    return res.status(500).json(
+      new ApiResponse(500, null, error.message)
+    )
+  }
+}
+export { uploadSubject, getSubjects, getUnits, generateStudyPlan, getStudyPlan, getTasksForPlan, deleteStudyPlan }

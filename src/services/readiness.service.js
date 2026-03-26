@@ -29,7 +29,7 @@ const calculateReadinessScore = async (studentId) => {
   await ReadinessScore.findOneAndUpdate(
     { student: studentId },
     { academicScore, skillScore, projectScore, totalScore, calculatedAt: new Date() },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   )
 
   return { academicScore, skillScore, projectScore, totalScore }

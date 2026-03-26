@@ -7,7 +7,8 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 const markTaskComplete = async (req, res) => {
   try {
     const { taskId } = req.params
-    const { notes } = req.body
+    // fixed - body is optional
+    const notes = req.body?.notes || ""
 
     // 1. Find task and verify it belongs to this student
     const task = await Task.findOne({
@@ -45,6 +46,50 @@ const markTaskComplete = async (req, res) => {
     )
   } catch (error) {
     console.error("Mark task error:", error)
+    return res.status(500).json(
+      new ApiResponse(500, null, error.message)
+    )
+  }
+}
+
+// ─── MARK TASK AS INCOMPLETE ──────────────────────────────────
+const markTaskIncomplete = async (req, res) => {
+  try {
+    const { taskId } = req.params
+
+    const task = await Task.findOne({
+      _id: taskId,
+      student: req.user._id,
+    })
+
+    if (!task) {
+      return res.status(404).json(
+        new ApiResponse(404, null, "Task not found")
+      )
+    }
+
+    if (!task.isCompleted) {
+      return res.status(400).json(
+        new ApiResponse(400, null, "Task is not completed yet")
+      )
+    }
+
+    // Mark task as incomplete
+    task.isCompleted = false
+    task.completedAt = null
+    await task.save({ validateBeforeSave: false })
+
+    // Remove the task log entry
+    await TaskLog.findOneAndDelete({
+      task: task._id,
+      student: req.user._id,
+    })
+
+    return res.status(200).json(
+      new ApiResponse(200, task, "Task marked as incomplete")
+    )
+  } catch (error) {
+    console.error("Mark incomplete error:", error)
     return res.status(500).json(
       new ApiResponse(500, null, error.message)
     )
@@ -141,4 +186,4 @@ const getTodaysTasks = async (req, res) => {
   }
 }
 
-export { markTaskComplete, getSubjectProgress, getTodaysTasks }
+export { markTaskComplete, markTaskIncomplete, getSubjectProgress, getTodaysTasks }

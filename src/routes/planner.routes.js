@@ -6,6 +6,7 @@ import {
   generateStudyPlan,
   getStudyPlan,
   getTasksForPlan,
+  deleteStudyPlan,
 } from "../controllers/planner.controller.js"
 import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js"
 
@@ -23,5 +24,6 @@ router.post("/plan", verifyJWT, authorizeRoles("student"), generateStudyPlan)
 router.get("/plan", verifyJWT, authorizeRoles("student"), getStudyPlan)
 
 router.get("/plan/:planId/tasks", verifyJWT, authorizeRoles("student"), getTasksForPlan)
+router.delete("/plan/:planId", verifyJWT, authorizeRoles("student"), deleteStudyPlan)
 
 export default router
