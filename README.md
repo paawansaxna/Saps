@@ -148,7 +148,23 @@ Supported roles:
 
 ## 📁 Project Structure
 
-text SAPS/ │ ├── frontend/ │   ├── src/ │   ├── components/ │   ├── pages/ │   ├── context/ │   └── services/ │ ├── backend/ │   ├── controllers/ │   ├── models/ │   ├── routes/ │   ├── middleware/ │   ├── utils/ │   └── config/ │ └── README.md 
+```bash
+SAPS
+├── frontend
+│   ├── src
+│   ├── components
+│   ├── pages
+│   ├── context
+│   └── services
+├── backend
+│   ├── controllers
+│   ├── models
+│   ├── routes
+│   ├── middleware
+│   ├── utils
+│   └── config
+└── README.md
+```
 
 ## ⚙️ Installation
 
